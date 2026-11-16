@@ -96,54 +96,55 @@ int main() {
     return 0;
 }
 //3
-#include <iostream>
-#include <stack>
-#include <algorithm> // Для min()
+#include <iostream> // Для ввода/вывода
+#include <stack>    // Для работы со стеком
+#include <algorithm> // Подключили, но в этом простом коде не используем (можно убрать)
 
-using namespace std;
+using namespace std; // Чтобы не писать std:: везде
 
-int main() {
-    stack<int> mainStack; // Обычный стек
-    stack<int> minStack;  // Стек для минимумов
+int main() { // Главная функция
+    stack<int> mainStack; // Создаем основной стек для чисел (int)
+    stack<int> minStack;  // Создаем вспомогательный стек для минимумов
 
-    // Функция добавления (push)
-    auto push = [&](int val) { // Лямбда-функция (просто способ создать функцию внутри main)
-        mainStack.push(val);
+    // Создаем функцию push (добавление). auto — это тип, который C++ определяет сам
+    auto push = [&](int val) { // [&] означает, что функция "видит" переменные снаружи (mainStack и minStack)
+        mainStack.push(val); // Всегда кладем новое число val в основной стек
         
-        // Если стек минимумов пуст, или новое число меньше/равно текущему минимуму
+        // Если стек минимумов пуст, ИЛИ новое число меньше или равно текущему минимуму
         if (minStack.empty() || val <= minStack.top()) {
-            minStack.push(val); // Кладем его
-        } else {
-            minStack.push(minStack.top()); // Иначе копируем старый минимум
+            minStack.push(val); // Кладем это число в стек минимумов
+        } else { // Иначе (если число больше текущего минимума)
+            minStack.push(minStack.top()); // Кладем копию текущего минимума (он не изменился)
         }
     };
 
-    // Функция извлечения (pop)
+    // Создаем функцию pop (удаление верхнего элемента)
     auto pop = [&]() {
-        if (!mainStack.empty()) {
-            mainStack.pop();
-            minStack.pop(); // Удаляем из обоих стеков
+        if (!mainStack.empty()) { // Если основной стек не пуст
+            mainStack.pop(); // Удаляем верхний элемент из основного стека
+            minStack.pop();  // И одновременно удаляем верхний элемент из стека минимумов
         }
     };
 
-    // Функция проверки на пустоту (empty)
+    // Создаем функцию empty (проверка на пустоту)
     auto empty = [&]() {
-        return mainStack.empty();
+        return mainStack.empty(); // Возвращаем true, если основной стек пуст, иначе false
     };
 
-    // Проверка работы
-    push(5);
-    push(3);
-    push(7);
+    push(5); // Добавляем 5
+    push(3); // Добавляем 3 (3 < 5, поэтому в minStack теперь 5, 3)
+    push(7); // Добавляем 7 (7 > 3, поэтому в minStack копируется 3: 5, 3, 3)
     
-    cout << "Min: " << minStack.top() << endl; // 3
-    pop(); // удалили 7
-    cout << "Min: " << minStack.top() << endl; // 3
-    pop(); // удалили 3
-    cout << "Min: " << minStack.top() << endl; // 5
+    cout << "Min: " << minStack.top() << endl; // Выводим верхушку minStack (это 3) — минимум
+    pop(); // Удаляем верхний элемент (7). Теперь в mainStack 5, 3. В minStack 5, 3
+    cout << "Min: " << minStack.top() << endl; // Снова выводим минимум (3)
+    pop(); // Удаляем 3. Теперь в mainStack 5. В minStack 5
+    cout << "Min: " << minStack.top() << endl; // Выводим минимум (5)
 
-    if (empty()) cout << "Empty" << endl;
-    else cout << "Not empty" << endl;
+    if (empty()) // Если стек пуст
+        cout << "Empty" << endl; // Выводим "Empty"
+    else // Иначе
+        cout << "Not empty" << endl; // Выводим "Not empty"
 
-    return 0;
+    return 0; // Завершаем программу
 }
